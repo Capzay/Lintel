@@ -1,0 +1,72 @@
+{
+  "id": "2026-10-12-prebuilt-release-binaries-and-download-i",
+  "kind": "change",
+  "title": "Prebuilt release binaries and download installers",
+  "status": "authorized",
+  "question": "How should Lintel ship prebuilt binaries so users don't need Go to install it?",
+  "context": "Public GitHub repo. Users currently clone and run install.sh / install.ps1, which build with Go. We want the install scripts to download a prebuilt binary for the user's OS/arch and verify a SHA-256 checksum, with no sudo. Module must stay stdlib-only. Jev advice 2026-10-12-how-should-lintel-ship-prebuilt-binaries recommended actions-release.",
+  "proposal": {
+    "choice": "actions-release: GitHub Actions workflow on v* tags cross-compiles linux/darwin/windows amd64+arm64 with CGO_ENABLED=0, writes SHA256SUMS, and publishes a GitHub Release with the gh CLI (no third-party actions)",
+    "intent": "How should Lintel ship prebuilt binaries so users don't need Go to install it?",
+    "proposed_change": "actions-release: GitHub Actions workflow on v* tags cross-compiles linux/darwin/windows amd64+arm64 with CGO_ENABLED=0, writes SHA256SUMS, and publishes a GitHub Release with the gh CLI (no third-party actions)",
+    "alternatives": [
+      "local-release: a local script cross-compiles the binaries and the maintainer uploads them with gh release create by hand",
+      "goreleaser: GoReleaser in a GitHub Actions workflow builds and publishes releases"
+    ],
+    "why": "Users install without Go; a tag push builds every target the same way, and the installers verify SHA-256 before installing.",
+    "rejected_because": "",
+    "risks": [
+      "Install scripts depend on the repo URL github.com/Capzay/Lintel and on a release existing.",
+      "Binaries stay unsigned, so macOS quarantine and SmartScreen still apply."
+    ],
+    "invariants": [
+      {
+        "id": "stdlib",
+        "statement": "The module imports only the Go standard library."
+      }
+    ],
+    "implementation_decisions": null,
+    "constraints": null,
+    "supersedes": [],
+    "acceptance_criteria": [
+      "Pushing a v* tag publishes a release with six binaries and SHA256SUMS; install.sh and install.ps1 download the matching binary, refuse it on checksum mismatch, and install without sudo or admin."
+    ],
+    "scope": {
+      "paths": [
+        ".github/workflows/release.yml",
+        "install.sh",
+        "install.ps1",
+        "README.md"
+      ],
+      "packages": [],
+      "components": []
+    }
+  },
+  "supersedes": [],
+  "superseded_by": "",
+  "jev": {
+    "verdict": "accept",
+    "code": "",
+    "summary": "Jev chose accept.",
+    "concerns": [],
+    "affected_invariant": "",
+    "conflict": "",
+    "required_change": "",
+    "acceptance_criteria": "",
+    "evidence": "none",
+    "probabilities": {
+      "accept": 0.66,
+      "block": 0.14,
+      "revise": 0.2
+    }
+  },
+  "human": {
+    "decision": "authorized",
+    "authorization": "authorized",
+    "note": "",
+    "at": "2026-10-12T21:00:49Z"
+  },
+  "review_error": "",
+  "created_at": "2026-10-12T21:00:44Z",
+  "updated_at": "2026-10-12T21:00:49Z"
+}

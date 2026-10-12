@@ -12,47 +12,45 @@ Jev advises and you decide. After a proposal, the agent runs `lintel wait` in th
 
 The agent cannot approve itself. It cannot run `lintel approve` in Codex, and it cannot edit `.lintel/` or the hook config anywhere. A stop hook keeps the agent in the turn while a decision waits, and a session-start hook tells every new session the gate state.
 
-## Requirements
-
-- Go 1.22 or later to build (the binary itself needs no runtime and only uses the Go standard library)
-- A TypeSafe API key for Jev reviews, from [console.typesafe.ai/keys](https://console.typesafe.ai/keys)
-- For the decision window: zenity on Linux. macOS and Windows have what they need built in.
-- For key storage on Linux: `secret-tool` (libsecret)
-
 ## Install
 
-Clone the repo and run the install script. It builds `lintel` from the source you just cloned and copies it into your user bin directory. It needs no sudo or admin rights and downloads nothing except what Go itself fetches. Read the script first if you like; it is about 40 lines.
+Prebuilt binaries for Linux, macOS, and Windows (amd64 and arm64) are on the [Releases](https://github.com/Capzay/Lintel/releases) page. The install scripts download the right one for your machine, check its SHA-256 against the release's `SHA256SUMS`, and install it for your user only, with no sudo or admin rights. You don't need Go.
 
 **Linux and macOS** (installs to `~/.local/bin`):
 
 ```bash
-git clone https://github.com/Capzay/Lintel.git
-cd Lintel
-./install.sh
+curl -fsSL https://raw.githubusercontent.com/Capzay/Lintel/main/install.sh | sh
 ```
 
 **Windows** (PowerShell, installs to `%LOCALAPPDATA%\Programs\lintel` and adds that folder to your user PATH):
 
 ```powershell
-git clone https://github.com/Capzay/Lintel.git
-cd Lintel
-powershell -ExecutionPolicy Bypass -File .\install.ps1
+irm https://raw.githubusercontent.com/Capzay/Lintel/main/install.ps1 | iex
 ```
 
-Set `LINTEL_BIN_DIR` to install somewhere else. Open a new terminal, then check that `lintel` runs.
+If you'd rather read the script before running it, download it first:
 
-To build it by hand, run:
+```bash
+curl -fsSLO https://raw.githubusercontent.com/Capzay/Lintel/main/install.sh
+less install.sh
+sh install.sh
+```
+
+Set `LINTEL_VERSION=v0.1.0` to install a specific release, or `LINTEL_BIN_DIR` to install somewhere else. Open a new terminal, then check that `lintel` runs.
+
+The binaries are not signed. The scripts clear the macOS quarantine flag and Windows' "downloaded from the internet" mark, so the OS will run them. You can also download a binary from the Releases page yourself and put it on your `PATH`.
+
+### Requirements
+
+- A TypeSafe API key for Jev reviews, from [console.typesafe.ai/keys](https://console.typesafe.ai/keys)
+- On Linux, `zenity` for the decision window and `secret-tool` (libsecret) for key storage. macOS and Windows have what they need built in.
+
+### Build from source
+
+With Go 1.22 or later:
 
 ```bash
 go build -o lintel ./cmd/lintel
-```
-
-The same source cross-compiles without a C toolchain:
-
-```bash
-GOOS=linux GOARCH=amd64 go build -o lintel-linux ./cmd/lintel
-GOOS=darwin GOARCH=arm64 go build -o lintel-macos ./cmd/lintel
-GOOS=windows GOARCH=amd64 go build -o lintel.exe ./cmd/lintel
 ```
 
 ## Quick start
@@ -127,6 +125,13 @@ In a project, delete `.lintel/` and `LINTEL.md`, plus the Lintel entries in `.cl
 
 ```bash
 go test ./...
+```
+
+To publish a release, push a version tag. The release workflow runs the tests, builds every target, writes `SHA256SUMS`, and creates the GitHub release.
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
 ```
 
 ## License

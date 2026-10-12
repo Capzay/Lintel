@@ -1,27 +1,54 @@
 #!/bin/sh
-# Build lintel from this checkout and install it for the current user.
-# No sudo, no downloads beyond the Go toolchain you already have.
+# Install the latest lintel release for the current user.
+# No sudo. Downloads one binary from GitHub Releases and checks its SHA-256.
 #
-#   ./install.sh                     installs to ~/.local/bin
-#   LINTEL_BIN_DIR=/some/dir ./install.sh
+#   curl -fsSL https://raw.githubusercontent.com/Capzay/Lintel/main/install.sh | sh
+#
+# LINTEL_BIN_DIR picks the install folder (default ~/.local/bin).
+# LINTEL_VERSION picks a release tag, such as v0.1.0 (default: latest).
 set -eu
 
-cd "$(dirname "$0")"
+repo="Capzay/Lintel"
 bin_dir="${LINTEL_BIN_DIR:-$HOME/.local/bin}"
 
-if ! command -v go >/dev/null 2>&1; then
-	echo "Go is not installed. Get Go 1.22 or later from https://go.dev/dl/ and run this again." >&2
+case "$(uname -s)" in
+Linux) os=linux ;;
+Darwin) os=darwin ;;
+*) echo "Unsupported OS $(uname -s). On Windows, use install.ps1." >&2; exit 1 ;;
+esac
+case "$(uname -m)" in
+x86_64 | amd64) arch=amd64 ;;
+aarch64 | arm64) arch=arm64 ;;
+*) echo "Unsupported CPU $(uname -m)." >&2; exit 1 ;;
+esac
+
+if [ -n "${LINTEL_VERSION:-}" ]; then
+	base="https://github.com/$repo/releases/download/$LINTEL_VERSION"
+else
+	base="https://github.com/$repo/releases/latest/download"
+fi
+asset="lintel-$os-$arch"
+
+tmp="$(mktemp -d)"
+trap 'rm -rf "$tmp"' EXIT
+echo "Downloading $asset"
+curl -fsSL -o "$tmp/$asset" "$base/$asset"
+curl -fsSL -o "$tmp/SHA256SUMS" "$base/SHA256SUMS"
+
+expected="$(awk -v f="$asset" '$2 == f { print $1 }' "$tmp/SHA256SUMS")"
+if command -v sha256sum >/dev/null 2>&1; then
+	actual="$(sha256sum "$tmp/$asset" | awk '{ print $1 }')"
+else
+	actual="$(shasum -a 256 "$tmp/$asset" | awk '{ print $1 }')"
+fi
+if [ -z "$expected" ] || [ "$expected" != "$actual" ]; then
+	echo "Checksum mismatch for $asset. Nothing was installed." >&2
 	exit 1
 fi
 
-echo "Building lintel with $(go version)"
-tmp="$(mktemp -d)"
-trap 'rm -rf "$tmp"' EXIT
-CGO_ENABLED=0 go build -trimpath -o "$tmp/lintel" ./cmd/lintel
-
 mkdir -p "$bin_dir"
-install -m 0755 "$tmp/lintel" "$bin_dir/lintel"
-if [ "$(uname -s)" = Darwin ]; then
+install -m 0755 "$tmp/$asset" "$bin_dir/lintel"
+if [ "$os" = darwin ]; then
 	xattr -d com.apple.quarantine "$bin_dir/lintel" 2>/dev/null || true
 fi
 echo "Installed $bin_dir/lintel"
