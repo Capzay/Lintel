@@ -128,3 +128,7 @@ In a project, delete `.lintel/` and `LINTEL.md`, plus the Lintel entries in `.cl
 ```bash
 go test ./...
 ```
+
+## License
+
+MIT. See [LICENSE](LICENSE).
