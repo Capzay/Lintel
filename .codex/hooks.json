@@ -1,0 +1,40 @@
+{
+  "description": "Jev change gate. Trust this hook with /hooks before Codex will run it.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "command": "/home/dev/.local/bin/lintel hook codex",
+            "statusMessage": "Checking Lintel",
+            "timeout": 15,
+            "type": "command"
+          }
+        ],
+        "matcher": "Bash|apply_patch|Edit|Write"
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "command": "/home/dev/.local/bin/lintel hook codex",
+            "timeout": 15,
+            "type": "command"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "command": "/home/dev/.local/bin/lintel hook codex",
+            "timeout": 15,
+            "type": "command"
+          }
+        ]
+      }
+    ]
+  }
+}

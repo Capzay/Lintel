@@ -1,0 +1,74 @@
+{
+  "id": "2026-09-27-lintel-stack",
+  "kind": "kickoff",
+  "title": "Lintel stack",
+  "status": "authorized",
+  "question": "What stack should Lintel use?",
+  "context": "Lintel is a rewrite of the Jev change gate as one static binary. The command is lintel. Jev remains the reviewer. Gate data lives in .lintel so it does not clash with this development .jev directory. go.sum is a lockfile and is produced by go mod tidy, not hand-edited.",
+  "proposal": {
+    "choice": "Go standard library only, module path lintel",
+    "intent": "Rewrite the change gate as Lintel, a single Go binary named lintel, with the same gate behavior and a per-OS Jev decision window.",
+    "proposed_change": "Create the Go module lintel, port the gate, and build lintel from the standard library only.",
+    "alternatives": [
+      "Keep the Python package and ship it with uv"
+    ],
+    "why": "A static binary installs the same way on Linux, macOS, and Windows, and the hook can call that binary without a language runtime.",
+    "rejected_because": "A Python install still depends on which interpreter is on PATH when the hook runs.",
+    "risks": [
+      "The decision window must be spawned per OS, because Go will not link GTK."
+    ],
+    "invariants": [
+      {
+        "id": "stdlib",
+        "statement": "The module imports only the Go standard library."
+      }
+    ],
+    "implementation_decisions": [
+      {
+        "id": "binary",
+        "statement": "lintel is one static binary. lintel init records its absolute path in each harness hook."
+      }
+    ],
+    "constraints": [],
+    "supersedes": [],
+    "acceptance_criteria": [
+      "go test ./... passes the ported gate, hook, store, review, and prompt suites, and the binary is built with no third-party modules."
+    ],
+    "scope": {
+      "paths": [
+        "**",
+        "go.mod",
+        ".github/workflows/ci.yml"
+      ],
+      "packages": [],
+      "components": []
+    }
+  },
+  "supersedes": [],
+  "superseded_by": "",
+  "jev": {
+    "verdict": "accept",
+    "code": "",
+    "summary": "Jev chose accept. No in-scope decision matched.",
+    "concerns": [],
+    "affected_invariant": "",
+    "conflict": "",
+    "required_change": "",
+    "acceptance_criteria": "",
+    "evidence": "none",
+    "probabilities": {
+      "accept": 0.87,
+      "block": 0.02,
+      "revise": 0.11
+    }
+  },
+  "human": {
+    "decision": "authorized",
+    "authorization": "authorized",
+    "note": "",
+    "at": "2026-09-27T22:38:09Z"
+  },
+  "review_error": "",
+  "created_at": "2026-09-27T22:37:49Z",
+  "updated_at": "2026-09-27T22:38:09Z"
+}

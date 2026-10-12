@@ -1,0 +1,32 @@
+# Built binaries (see README build commands)
+/lintel
+/lintel.exe
+/lintel-linux
+/lintel-macos
+*.exe
+*.test
+*.out
+
+# Release builds: keep the INSTALL.md notes, ignore binaries and archives
+dist/*.zip
+dist/*/lintel-*
+
+# Go tooling
+go.work
+go.work.sum
+coverage.*
+
+# Python prototype leftovers
+.venv/
+__pycache__/
+
+# Local agent settings
+.claude/settings.local.json
+.claude/*.off
+
+# Editors and OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db

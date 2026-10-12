@@ -1,0 +1,7 @@
+# TypeSafe's Jev reviews proposals. Store the API key in the system keyring:
+#   lintel login
+# Create a key at https://console.typesafe.ai/keys
+# Do not put the key in this file.
+
+[reviewer]
+model = "jev-latest"

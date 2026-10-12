@@ -1,0 +1,29 @@
+{
+  "hooks": {
+    "beforeShellExecution": [
+      {
+        "command": "/home/dev/.local/bin/lintel hook cursor",
+        "failClosed": true
+      }
+    ],
+    "preToolUse": [
+      {
+        "command": "/home/dev/.local/bin/lintel hook cursor",
+        "failClosed": true,
+        "matcher": "Write|StrReplace|EditNotebook|Delete|Shell"
+      }
+    ],
+    "sessionStart": [
+      {
+        "command": "/home/dev/.local/bin/lintel hook cursor"
+      }
+    ],
+    "stop": [
+      {
+        "command": "/home/dev/.local/bin/lintel hook cursor",
+        "loop_limit": 2
+      }
+    ]
+  },
+  "version": 1
+}

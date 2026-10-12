@@ -1,0 +1,63 @@
+{
+  "id": "2026-09-29-add-lintel-version-command",
+  "kind": "change",
+  "title": "Add lintel version command",
+  "status": "authorized",
+  "question": "Should lintel print its version so users can confirm which binary the hooks run?",
+  "context": "After the hook repair, the four harness configs point at ~/.local/bin/lintel. A version command lets the user check which build is installed.",
+  "proposal": {
+    "choice": "Add a lintel version subcommand that prints a version string set at build time with -ldflags",
+    "intent": "Let users confirm which lintel build their hooks call.",
+    "proposed_change": "Add a lintel version subcommand that prints a version string set at build time with -ldflags",
+    "alternatives": [
+      "Print the version from lintel status"
+    ],
+    "why": "A dedicated command is the usual CLI convention and is easy to script.",
+    "rejected_because": "Status is about the gate, not the binary.",
+    "risks": [
+      "The version string reads dev unless the build sets it."
+    ],
+    "invariants": null,
+    "implementation_decisions": null,
+    "constraints": null,
+    "supersedes": [],
+    "acceptance_criteria": [
+      "lintel version prints a version string and go test ./... passes."
+    ],
+    "scope": {
+      "paths": [
+        "internal/cli/**",
+        "cmd/lintel/**"
+      ],
+      "packages": [],
+      "components": []
+    }
+  },
+  "supersedes": [],
+  "superseded_by": "",
+  "jev": {
+    "verdict": "accept",
+    "code": "",
+    "summary": "Jev chose accept.",
+    "concerns": [],
+    "affected_invariant": "",
+    "conflict": "",
+    "required_change": "",
+    "acceptance_criteria": "",
+    "evidence": "none",
+    "probabilities": {
+      "accept": 0.54,
+      "block": 0.41,
+      "revise": 0.05
+    }
+  },
+  "human": {
+    "decision": "authorized",
+    "authorization": "authorized",
+    "note": "",
+    "at": "2026-09-29T14:13:43Z"
+  },
+  "review_error": "",
+  "created_at": "2026-09-29T14:13:23Z",
+  "updated_at": "2026-09-29T14:13:43Z"
+}

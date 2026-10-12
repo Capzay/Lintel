@@ -1,0 +1,49 @@
+{
+  "hooks": {
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "command": "/home/dev/.local/bin/lintel hook claude",
+            "timeout": 15,
+            "type": "command"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "command": "/home/dev/.local/bin/lintel hook claude",
+            "timeout": 15,
+            "type": "command"
+          }
+        ],
+        "matcher": "Write|Edit|MultiEdit|Bash|NotebookEdit"
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "command": "/home/dev/.local/bin/lintel hook claude",
+            "timeout": 15,
+            "type": "command"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "command": "/home/dev/.local/bin/lintel hook claude",
+            "timeout": 15,
+            "type": "command"
+          }
+        ]
+      }
+    ]
+  }
+}

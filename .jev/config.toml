@@ -1,0 +1,6 @@
+# TypeSafe's Jev reviews proposals. Set the API key in the environment, not in this file:
+#   export TYPESAFE_API_KEY="..."
+# Create a key at https://console.typesafe.ai/keys
+
+[reviewer]
+model = "jev-latest"
