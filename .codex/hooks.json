@@ -5,7 +5,7 @@
       {
         "hooks": [
           {
-            "command": "/home/dev/.local/bin/lintel hook codex",
+            "command": "lintel hook codex",
             "statusMessage": "Checking Lintel",
             "timeout": 15,
             "type": "command"
@@ -18,7 +18,7 @@
       {
         "hooks": [
           {
-            "command": "/home/dev/.local/bin/lintel hook codex",
+            "command": "lintel hook codex",
             "timeout": 15,
             "type": "command"
           }
@@ -29,7 +29,7 @@
       {
         "hooks": [
           {
-            "command": "/home/dev/.local/bin/lintel hook codex",
+            "command": "lintel hook codex",
             "timeout": 15,
             "type": "command"
           }

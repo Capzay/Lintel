@@ -4,7 +4,7 @@
       {
         "hooks": [
           {
-            "command": "/home/dev/.local/bin/lintel hook gemini",
+            "command": "lintel hook gemini",
             "name": "lintel",
             "timeout": 10000,
             "type": "command"
@@ -16,7 +16,7 @@
       {
         "hooks": [
           {
-            "command": "/home/dev/.local/bin/lintel hook gemini",
+            "command": "lintel hook gemini",
             "name": "lintel",
             "timeout": 10000,
             "type": "command"
@@ -29,7 +29,7 @@
       {
         "hooks": [
           {
-            "command": "/home/dev/.local/bin/lintel hook gemini",
+            "command": "lintel hook gemini",
             "name": "lintel",
             "timeout": 10000,
             "type": "command"
@@ -41,7 +41,7 @@
       {
         "hooks": [
           {
-            "command": "/home/dev/.local/bin/lintel hook gemini",
+            "command": "lintel hook gemini",
             "name": "lintel",
             "timeout": 10000,
             "type": "command"

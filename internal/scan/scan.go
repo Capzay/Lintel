@@ -175,15 +175,28 @@ func IsLintel(s Segment) bool {
 // LintelVerb returns the subcommand of the first lintel segment, or "".
 func LintelVerb(command string) string {
 	for _, segment := range Parse(command) {
-		if !IsLintel(segment) {
-			continue
+		if IsLintel(segment) {
+			return segmentVerb(segment)
 		}
-		for _, part := range segment.Argv()[1:] {
-			if !strings.HasPrefix(part, "-") {
-				return part
-			}
+	}
+	return ""
+}
+
+// RunsLintel reports whether any lintel segment of command runs verb.
+func RunsLintel(command, verb string) bool {
+	for _, segment := range Parse(command) {
+		if IsLintel(segment) && segmentVerb(segment) == verb {
+			return true
 		}
-		return ""
+	}
+	return false
+}
+
+func segmentVerb(segment Segment) string {
+	for _, part := range segment.Argv()[1:] {
+		if !strings.HasPrefix(part, "-") {
+			return part
+		}
 	}
 	return ""
 }

@@ -34,7 +34,7 @@ Then, in a project:
 lintel init
 ```
 
-`lintel init` writes `.lintel/`, hook config for Cursor, Claude, Codex, and Gemini, and `LINTEL.md`. The hook command is the absolute path of the binary you ran, so it does not depend on `PATH` later. Re-running `lintel init` replaces older Lintel or Jev hook entries and keeps everything else. Decisions from the Python prototype's `.jev/` are imported the first time. Codex will not run project hooks until you trust them with `/hooks`; trust them again after an update.
+`lintel init` writes `.lintel/`, hook config for Cursor, Claude, Codex, and Gemini, and `LINTEL.md`. When the binary you ran is the `lintel` on `PATH`, the hooks call plain `lintel hook <tool>`, so the committed config works on Linux, macOS, and Windows alike. A binary that is not on `PATH` is written as its absolute path instead (forward slashes and double quotes on Windows), which only works on that machine. Re-running `lintel init` replaces older Lintel or Jev hook entries and keeps everything else. Decisions from the Python prototype's `.jev/` are imported the first time. Codex will not run project hooks until you trust them with `/hooks`; trust them again after an update.
 
 Create a key at [console.typesafe.ai/keys](https://console.typesafe.ai/keys), then store it in the system keyring:
 

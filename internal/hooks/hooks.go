@@ -16,7 +16,7 @@ var readTools = map[string]bool{
 }
 
 var shellTools = map[string]bool{
-	"Shell": true, "Bash": true, "shell": true, "run_shell_command": true, "ShellCommand": true,
+	"Shell": true, "Bash": true, "PowerShell": true, "shell": true, "run_shell_command": true, "ShellCommand": true,
 }
 
 var pathKeys = []string{"path", "file_path", "target_file", "notebook_path", "target_notebook"}

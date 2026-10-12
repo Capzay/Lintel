@@ -551,7 +551,7 @@ func cmdHook(args []string, opt Option) int {
 // may not run lintel approve at all. It returns nil for other commands.
 func approval(tool, event, command string, project store.Project) map[string]any {
 	approve := scan.MentionsApprove(command)
-	if !approve && scan.LintelVerb(command) != "wait" {
+	if !approve && !scan.RunsLintel(command, "wait") {
 		return nil
 	}
 	reviewed := reviewedDecision(project)
@@ -572,8 +572,13 @@ func approval(tool, event, command string, project store.Project) map[string]any
 		}
 		return body
 	}
-	if reviewed == nil || !hooks.CanAsk(tool) {
+	if !hooks.CanAsk(tool) {
 		return nil
+	}
+	// Letting wait run here would open the Jev window instead of the
+	// harness's own prompt, so wait only runs as the harness prompt.
+	if reviewed == nil {
+		return hooks.Denied(tool, "No reviewed decision is waiting yet, so "+toolName(tool)+" cannot ask the human. Run `lintel propose` on its own first, then run `lintel wait` as a separate command. If the proposal failed review, run `lintel status`.")
 	}
 	if tool == "cursor" {
 		return hooks.Denied(tool, "In Cursor the human decides in Cursor's own prompt. Run `lintel approve "+reviewed.ID+"` now; Cursor asks the human before it runs.")
@@ -583,6 +588,10 @@ func approval(tool, event, command string, project store.Project) map[string]any
 		return nil
 	}
 	return body
+}
+
+func toolName(tool string) string {
+	return map[string]string{"claude": "Claude Code", "gemini": "Gemini CLI", "cursor": "Cursor"}[tool]
 }
 
 func exactApprove(command, id string) bool {

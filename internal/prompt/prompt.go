@@ -156,6 +156,9 @@ return answer`
 	}
 }
 
+// windowsScript reports the choice through the form's DialogResult. Button
+// handlers built with GetNewClosure run in their own module scope, so a
+// $script: variable they set never reaches the final Write-Output.
 func windowsScript(filename string) string {
 	return `
 Add-Type -AssemblyName System.Windows.Forms
@@ -175,27 +178,28 @@ $form.Controls.Add($box)
 $panel = New-Object System.Windows.Forms.FlowLayoutPanel
 $panel.Dock = 'Bottom'
 $panel.Height = 48
-$script:chosen = ''
 $notYet = New-Object System.Windows.Forms.Button
 $notYet.Text = 'Not yet'
 $notYet.Width = 120
-$notYet.Add_Click({ $script:chosen = 'Not yet'; $form.Close() }.GetNewClosure())
+$notYet.DialogResult = 'Cancel'
 $approve = New-Object System.Windows.Forms.Button
 $approve.Text = 'Approve'
 $approve.Width = 120
-$approve.Add_Click({ $script:chosen = 'Approve'; $form.Close() }.GetNewClosure())
+$approve.DialogResult = 'Yes'
 $reject = New-Object System.Windows.Forms.Button
 $reject.Text = 'Reject'
 $reject.Width = 120
-$reject.Add_Click({ $script:chosen = 'Reject'; $form.Close() }.GetNewClosure())
+$reject.DialogResult = 'No'
 $panel.Controls.Add($notYet)
 $panel.Controls.Add($approve)
 $panel.Controls.Add($reject)
 $form.Controls.Add($panel)
 $form.AcceptButton = $null
 $form.CancelButton = $notYet
-$form.ShowDialog() | Out-Null
-Write-Output $script:chosen
+$form.ActiveControl = $notYet
+$form.TopMost = $true
+$result = $form.ShowDialog()
+if ($result -eq 'Yes') { Write-Output 'Approve' } elseif ($result -eq 'No') { Write-Output 'Reject' } else { Write-Output 'Not yet' }
 `
 }
 

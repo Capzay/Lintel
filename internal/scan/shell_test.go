@@ -90,3 +90,9 @@ func TestInstallPackagesIgnoreRedirects(t *testing.T) {
 		t.Fatal(packages, ok)
 	}
 }
+
+func TestRunsLintelSeesEverySegment(t *testing.T) {
+	if !scan.RunsLintel("lintel propose --title x && lintel wait", "wait") || scan.RunsLintel("echo lintel wait", "wait") {
+		t.Fatal("RunsLintel")
+	}
+}

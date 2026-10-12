@@ -4,7 +4,7 @@
       {
         "hooks": [
           {
-            "command": "/home/dev/.local/bin/lintel hook claude",
+            "command": "lintel hook claude",
             "timeout": 15,
             "type": "command"
           }
@@ -15,19 +15,19 @@
       {
         "hooks": [
           {
-            "command": "/home/dev/.local/bin/lintel hook claude",
+            "command": "lintel hook claude",
             "timeout": 15,
             "type": "command"
           }
         ],
-        "matcher": "Write|Edit|MultiEdit|Bash|NotebookEdit"
+        "matcher": "Write|Edit|MultiEdit|Bash|PowerShell|NotebookEdit"
       }
     ],
     "SessionStart": [
       {
         "hooks": [
           {
-            "command": "/home/dev/.local/bin/lintel hook claude",
+            "command": "lintel hook claude",
             "timeout": 15,
             "type": "command"
           }
@@ -38,7 +38,7 @@
       {
         "hooks": [
           {
-            "command": "/home/dev/.local/bin/lintel hook claude",
+            "command": "lintel hook claude",
             "timeout": 15,
             "type": "command"
           }

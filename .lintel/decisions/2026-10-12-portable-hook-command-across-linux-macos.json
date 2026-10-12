@@ -1,0 +1,74 @@
+{
+  "id": "2026-10-12-portable-hook-command-across-linux-macos",
+  "kind": "change",
+  "title": "Portable hook command across Linux, macOS, Windows",
+  "status": "authorized",
+  "question": "How should lintel init write the hook command so committed hook configs work on every OS?",
+  "context": "Hook configs are committed. They hold /home/dev/.local/bin/lintel, so a Windows or macOS checkout runs a Linux path. Windows paths also get POSIX single quotes, which cmd and PowerShell cannot parse.",
+  "proposal": {
+    "choice": "Write bare 'lintel hook \u003ctool\u003e' when the running binary is the lintel found on PATH. Otherwise write the absolute path, using forward slashes and double quotes on Windows.",
+    "intent": "How should lintel init write the hook command so committed hook configs work on every OS?",
+    "proposed_change": "Write bare 'lintel hook \u003ctool\u003e' when the running binary is the lintel found on PATH. Otherwise write the absolute path, using forward slashes and double quotes on Windows.",
+    "alternatives": [
+      "Always write the absolute path and only fix Windows quoting",
+      "Always write bare 'lintel' and rely on PATH"
+    ],
+    "why": "A normal install is on PATH, so its config is the same on every machine and OS and can be committed. A binary that is not on PATH still gets an absolute path that works.",
+    "rejected_because": "An absolute path alone still breaks every other machine that shares the repo. Always relying on PATH breaks an install that is not on PATH.",
+    "risks": [
+      "A hook resolved through PATH runs whichever lintel is first on PATH when the harness starts."
+    ],
+    "invariants": null,
+    "implementation_decisions": [
+      {
+        "id": "binary",
+        "statement": "lintel is one static binary. lintel init writes bare lintel when the running binary is the lintel on PATH, and otherwise writes its absolute path quoted for the OS."
+      }
+    ],
+    "constraints": null,
+    "supersedes": [],
+    "acceptance_criteria": [
+      "go test ./... passes. Tests cover HookCommand on PATH and off PATH, and Windows quoting. Re-running lintel init rewrites the committed hook configs to 'lintel hook \u003ctool\u003e'."
+    ],
+    "scope": {
+      "paths": [
+        "internal/initcmd/**",
+        "README.md",
+        "dist/**",
+        ".claude/settings.json",
+        ".codex/hooks.json",
+        ".cursor/hooks.json",
+        ".gemini/settings.json"
+      ],
+      "packages": [],
+      "components": []
+    }
+  },
+  "supersedes": [],
+  "superseded_by": "",
+  "jev": {
+    "verdict": "accept",
+    "code": "",
+    "summary": "Jev chose accept.",
+    "concerns": [],
+    "affected_invariant": "",
+    "conflict": "",
+    "required_change": "",
+    "acceptance_criteria": "",
+    "evidence": "none",
+    "probabilities": {
+      "accept": 0.72,
+      "block": 0.14,
+      "revise": 0.14
+    }
+  },
+  "human": {
+    "decision": "authorized",
+    "authorization": "authorized",
+    "note": "",
+    "at": "2026-10-12T20:39:56Z"
+  },
+  "review_error": "",
+  "created_at": "2026-10-12T20:39:46Z",
+  "updated_at": "2026-10-12T20:39:56Z"
+}

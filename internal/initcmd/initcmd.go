@@ -5,7 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 
 	"lintel/internal/instructions"
@@ -14,13 +16,46 @@ import (
 // Tools are the harnesses that receive a hook.
 var Tools = []string{"cursor", "claude", "codex", "gemini"}
 
-// HookCommand is the absolute lintel binary plus the hook subcommand.
+// HookCommand is the lintel binary plus the hook subcommand. When the running
+// binary is the lintel on PATH it is written bare, so a committed hook config
+// works on every machine and OS. Any other binary is written as its absolute
+// path, quoted for the OS.
 func HookCommand() string {
-	exe, err := os.Executable()
-	if err != nil || exe == "" {
-		exe = "lintel"
+	exe, _ := os.Executable()
+	found, _ := exec.LookPath("lintel")
+	return hookCommand(exe, found, runtime.GOOS == "windows")
+}
+
+func hookCommand(exe, found string, windows bool) string {
+	if exe == "" || sameFile(exe, found) {
+		return "lintel hook"
+	}
+	if windows {
+		return windowsQuote(exe) + " hook"
 	}
 	return shellQuote(exe) + " hook"
+}
+
+func sameFile(a, b string) bool {
+	if b == "" {
+		return false
+	}
+	left, err := os.Stat(a)
+	if err != nil {
+		return false
+	}
+	right, err := os.Stat(b)
+	return err == nil && os.SameFile(left, right)
+}
+
+// windowsQuote writes a Windows path with forward slashes, which Git Bash,
+// cmd, and PowerShell all accept, and double-quotes it when it has a space.
+func windowsQuote(value string) string {
+	value = strings.ReplaceAll(value, `\`, "/")
+	if strings.ContainsAny(value, " \t") {
+		return `"` + value + `"`
+	}
+	return value
 }
 
 // Project writes .lintel, LINTEL.md, and harness hooks.
@@ -83,7 +118,7 @@ func claudeDocument(command string) map[string]any {
 	hook := map[string]any{"type": "command", "command": command + " claude", "timeout": 15}
 	return map[string]any{
 		"hooks": map[string]any{
-			"PreToolUse":   commandHooks("Write|Edit|MultiEdit|Bash|NotebookEdit", hook),
+			"PreToolUse":   commandHooks("Write|Edit|MultiEdit|Bash|PowerShell|NotebookEdit", hook),
 			"SessionStart": commandHooks("", hook),
 			"Stop":         commandHooks("", hook),
 			"Notification": commandHooks("", hook),

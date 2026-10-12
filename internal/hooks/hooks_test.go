@@ -463,3 +463,40 @@ func containsSub(values []string, want string) bool {
 	}
 	return false
 }
+
+// Claude Code on Windows runs shell commands through its PowerShell tool.
+func TestPowerShellWaitBecomesTheHarnessPrompt(t *testing.T) {
+	id, _ := proposeKickoff(t)
+	claude := hook(t, "claude", `{"hook_event_name":"PreToolUse","tool_name":"PowerShell","tool_input":{"command":"lintel wait"}}`)
+	specific := claude["hookSpecificOutput"].(map[string]any)
+	if specific["permissionDecision"] != "ask" || specific["updatedInput"].(map[string]any)["command"] != "lintel approve "+id {
+		t.Fatal(specific)
+	}
+}
+
+// A wait that reaches the hook before Jev has reviewed anything, such as
+// `lintel propose ... && lintel wait`, would fall back to the Jev window.
+func TestWaitBeforeReviewIsDeniedWhereTheHarnessCanAsk(t *testing.T) {
+	root := t.TempDir()
+	t.Setenv("LINTEL_PROJECT", root)
+	if _, err := initcmd.Project(root); err != nil {
+		t.Fatal(err)
+	}
+	chained := `lintel propose --kind kickoff --title x --question y --choice z && lintel wait`
+	claude := hook(t, "claude", `{"tool_name":"Bash","tool_input":{"command":"`+chained+`"}}`)
+	specific := claude["hookSpecificOutput"].(map[string]any)
+	if specific["permissionDecision"] != "deny" || !strings.Contains(specific["permissionDecisionReason"].(string), "separate command") {
+		t.Fatal(specific)
+	}
+	gemini := hook(t, "gemini", `{"hook_event_name":"BeforeTool","tool_name":"run_shell_command","tool_input":{"command":"lintel wait"}}`)
+	if gemini["decision"] != "deny" {
+		t.Fatal(gemini)
+	}
+	cursor := hook(t, "cursor", `{"hook_event_name":"beforeShellExecution","command":"lintel wait"}`)
+	if cursor["permission"] != "deny" {
+		t.Fatal(cursor)
+	}
+	if codex := hook(t, "codex", `{"hook_event_name":"PreToolUse","tool_name":"Bash","tool_input":{"command":"lintel wait"}}`); len(codex) != 0 {
+		t.Fatal(codex)
+	}
+}

@@ -1,6 +1,9 @@
 package prompt
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 func TestApproveAndRejectKeepTheNote(t *testing.T) {
 	choice, note, ok := ParseAnswer(1, "Approve")
@@ -45,3 +48,17 @@ func TestMissingDialogDoesNotDecide(t *testing.T) {
 type errUnbalanced struct{}
 
 func (errUnbalanced) Error() string { return "no display" }
+
+// A $script: variable set inside a GetNewClosure handler never reaches the
+// script's own scope, so the Windows window must report through DialogResult.
+func TestWindowsScriptReportsThroughDialogResult(t *testing.T) {
+	script := windowsScript(`C:\Temp\it's.txt`)
+	for _, want := range []string{"$approve.DialogResult = 'Yes'", "$reject.DialogResult = 'No'", "Write-Output 'Approve'", "Write-Output 'Reject'", `C:\Temp\it''s.txt`} {
+		if !strings.Contains(script, want) {
+			t.Fatalf("script lacks %q", want)
+		}
+	}
+	if strings.Contains(script, "GetNewClosure") || strings.Contains(script, "$script:") {
+		t.Fatal("script reports through a closure-scoped variable")
+	}
+}

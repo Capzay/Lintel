@@ -60,7 +60,9 @@ cd path/to/your/project
 lintel init
 ```
 
-This creates `.lintel/`, `LINTEL.md` (the rules the agent follows), pointers in `CLAUDE.md` / `AGENTS.md` / `GEMINI.md`, and hook config for each tool. The hooks point at the full path of the `lintel` you ran, so don't move the binary afterwards. If you do, run `lintel init` again.
+This creates `.lintel/`, `LINTEL.md` (the rules the agent follows), pointers in `CLAUDE.md` / `AGENTS.md` / `GEMINI.md`, and hook config for each tool. When `which lintel` finds it, the hooks call plain `lintel hook <tool>` and the same config works for teammates on Linux and Windows. If `lintel` is not on PATH, the hooks point at its full path instead, so don't move the binary afterwards; if you do, run `lintel init` again.
+
+If the project already has hook config from another machine (for example `/home/...` paths from Linux), run `lintel init` once to replace it.
 
 Then, per tool:
 
